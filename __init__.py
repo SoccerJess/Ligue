@@ -5,7 +5,7 @@ Created on Mon Feb  6 16:57:50 2017
 @author: 3415756
 """
 
-from Toolbox import *
+from toolbox import *
 from soccersimulator import Player,SoccerTeam
 from strategy import AttaqueStrategy,DefenseStrategy
 

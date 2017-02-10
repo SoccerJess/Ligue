@@ -4,7 +4,7 @@ from soccersimulator.strategies  import Strategy
 from soccersimulator.mdpsoccer import SoccerTeam, Simulation
 from soccersimulator.gui import SimuGUI,show_state,show_simu
 import math
-from Toolbox import *
+from toolbox import *
 from strategy import *
 
 ## Creation d'une equipe
