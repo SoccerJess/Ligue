@@ -18,7 +18,7 @@ class AttaqueStrategy(Strategy):
         Strategy.__init__(self,"Random")
     def compute_strategy(self, state, id_team, id_player):        
         me = ActionOffensive(state, id_team, id_player)
-        return me.aller(me.ball_position()) + me.dribbler()
+        return me.aller(me.zone_hauteDroite())
     
 #Stategie de defense
 class DefenseStrategy(Strategy):
@@ -26,7 +26,15 @@ class DefenseStrategy(Strategy):
         Strategy.__init__(self,"Random")
     def compute_strategy(self, state, id_team, id_player):
         me = ActionDefensive(state, id_team, id_player)
-        return me.garder_balle(me.my_position()) + me.ralentir()
+        return me.garder_balle() + me.ralentir()
+        
+#Strategie de passe
+class PasseStrategy(Strategy):
+    def __init__(self):
+        Strategy.__init__(self,"Random")
+    def compute_strategy(self, state, id_team, id_player):
+        me = ActionOffensive(state, id_team, id_player)
+        return me.aller(me.ball_position()) + me.passe()
             
 ## Creation d'une equipe
 team1 = SoccerTeam(name="team1",login="etu1")

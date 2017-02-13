@@ -47,6 +47,30 @@ class Position(object):
     def zone_tir(self):
         return settings.PLAYER_RADIUS + settings.BALL_RADIUS
         
+    def zone_hauteGauche(self):
+        return Vector2D(10, 75)
+        
+    def zone_hauteDroite(self):
+        return Vector2D(130, 75)
+        
+    def zone_basseGauche(self):
+        return Vector2D(10, 10)
+    
+    def zone_basseDroite(self):
+        return Vector2D(130, 10)
+        
+    def position_coop(self):
+        if (self.id_team == 1):
+            if (self.id_player == 0):
+                return self.state.player_state(1,1).position
+            if (self.id_player == 1):
+                return self.state.player_state(1,0).position
+        if (self.id_team == 2):
+            if (self.id_player == 0):
+                return self.state.player_state(2,1).position
+            if (self.id_team == 1):
+                return self.state.player_state(2,0).position
+        
 #    def position_adv(self):
 #        if (self.id_team == 1):
 #            return self.state.player_state(self.id_team, self.id_player).position
@@ -94,7 +118,16 @@ class ActionOffensive(Deplacement):
                 elif ((self.ball_position()-self.my_position()).norm <= self.zone_tir()):   #proche de la balle et hors de la surface = dribble "team2"
                     return self.aller(self.ball_position()) + self.dribble(self.but_adv())
                 else:
-                    return self.aller(self.ball_position()) #loin de la zone de tir et hors de la surface = aller "team2" 
+                    return self.aller(self.ball_position()) #loin de la zone de tir et hors de la surface = aller "team2"
+        
+        def passe(self):
+           if (self.id_team == 1):
+                if ((self.ball_position()-self.my_position()).norm <= self.zone_tir()) and self.ball_position_x() >= 75:    #proche de la balle et de la surface de réparation = perfect_shoot
+                    return self.perfect_shoot(self.position_coop())            
+                elif ((self.ball_position()-self.my_position()).norm <= self.zone_tir()):   #proche de la balle et hors de la surface = dribble
+                    return self.aller(self.ball_position()) + self.dribble(self.but_adv())
+                else:
+                    return self.aller(self.ball_position()) #loin de la zone de tir et hors de la surface = aller
 
 ###############################################################################
 
@@ -105,9 +138,9 @@ class ActionDefensive(Deplacement):
     def dribble(self, p):
             return SoccerAction(Vector2D(), 0.015 * (p-self.my_position()))
             
-    def garder_balle(self, p):
-        if ((self.ball_position()-self.my_position()).norm <= self.zone_tir()) and self.ball_position_x() < 150:
-            return self.aller(self.ball_position()) + self.dribble(p-self.my_position())
+    def garder_balle(self):
+        if ((self.ball_position()-self.my_position()).norm <= self.zone_tir()):
+            return self.dribble(self.zone_hauteGauche())
         else:
             return self.aller(self.ball_position())
         
