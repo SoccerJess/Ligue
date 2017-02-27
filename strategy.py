@@ -13,12 +13,28 @@ from soccersimulator.gui import SimuGUI,show_state,show_simu
 import math
 from toolbox import *
 
-class AttaqueStrategy(Strategy):
+class AttaqueStrategy_1v1(Strategy):
     def __init__(self):
         Strategy.__init__(self,"Random")
     def compute_strategy(self, state, id_team, id_player):        
         me = ActionOffensive(state, id_team, id_player)
-        return me.aller(me.zone_hauteDroite())
+        if (me.ball_position() - me.my_position()).norm <= me.zone_tir() and me.est_au_milieu(me.ball_position_x()):
+                return me.dribble(me.but_adv())
+        if (me.ball_position() - me.my_position()).norm <= me.zone_tir() and me.est_en_attaque(me.my_position_x()):
+                return me.perfect_shoot(me.but_adv())
+        return me.aller(me.ball_position())
+
+class AttaqueStrategy_2v2(Strategy):
+    def __init__(self):
+        Strategy.__init__(self,"Random")
+    def compute_strategy(self, state, id_team, id_player):        
+        me = ActionOffensive(state, id_team, id_player)
+        if (me.ball_position() - me.my_position()).norm <= me.zone_tir():
+            return me.perfect_shoot(me.but_adv())
+        elif (me.est_en_attaque(me.ball_position_x())):
+            return me.aller(me.ball_position_future())
+        else:
+            return me.aller(me.zone_basseDroite())
     
 #Stategie de defense
 class DefenseStrategy(Strategy):
@@ -32,12 +48,12 @@ class DefenseStrategy(Strategy):
 class PasseStrategy(Strategy):
     def __init__(self):
         Strategy.__init__(self,"Random")
+        self.passe = False
     def compute_strategy(self, state, id_team, id_player):
+#        if self.passe:
+
         me = ActionOffensive(state, id_team, id_player)
+#        passe = me.passe()
+#        if passe.name == "Passe":
+#            self.passe = True
         return me.aller(me.ball_position()) + me.passe()
-            
-## Creation d'une equipe
-team1 = SoccerTeam(name="team1",login="etu1")
-team2 = SoccerTeam(name="team2",login="etu2")
-team1.add("John",AttaqueStrategy()) #Strategie qui ne fait rien
-team2.add("Paul",DefenseStrategy())   #Strategie aleatoire

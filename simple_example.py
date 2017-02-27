@@ -10,7 +10,7 @@ from strategy import *
 ## Creation d'une equipe
 team1 = SoccerTeam(name="team1",login="etu1")
 team2 = SoccerTeam(name="team2",login="etu2")
-team1.add("John",AttaqueStrategy()) #Strategie qui ne fait rien
+team1.add("John",AttaqueStrategy_2v2()) #Strategie qui ne fait rien
 team2.add("Paul",Strategy())   #Strategie aleatoire
 team1.add("Moro",PasseStrategy())
 team2.add("Dylan",Strategy())
