@@ -13,7 +13,7 @@ from soccersimulator.gui import SimuGUI,show_state,show_simu
 import random
 import math
 
-#Toolbox
+#Toolbox de base
 
 class Position(object):
     def __init__(self, state, id_team, id_player):
