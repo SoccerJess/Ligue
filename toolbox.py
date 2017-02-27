@@ -124,7 +124,7 @@ class Position(object):
                 return self.state.player_state(2,0).position.y
     
     def zone_tir(self):
-        return settings.PLAYER_RADIUS + settings.BALL_RADIUS
+        return (self.ball_position() - self.my_position()).norm <= settings.PLAYER_RADIUS + settings.BALL_RADIUS
         
     def zone_hauteGauche(self):
         return Vector2D(10, 75)
@@ -133,10 +133,10 @@ class Position(object):
         return Vector2D(130, 75)
         
     def zone_basseGauche(self):
-        return Vector2D(10, 10)
+        return Vector2D(10, 25)
     
     def zone_basseDroite(self):
-        return Vector2D(130, 10)
+        return Vector2D(130, 25)
         
 #    def position_adv(self):
 #        if (self.id_team == 1):
@@ -168,12 +168,7 @@ class ActionOffensive(Deplacement):
             return self.dribble(self.but_adv())
  
         def passe(self):
-            if (self.ball_position() - self.my_position()).norm <= self.zone_tir() and self.est_en_attaque(self.position_coop_x()):
-                return self.perfect_shoot(self.position_coop())
-            elif (self.ball_position() - self.my_position()).norm <= self.zone_tir():
-                return self.aller(self.ball_position()) + self.dribble(self.zone_hauteDroite())
-            else: 
-                return self.aller(self.ball_position())
+            return self.perfect_shoot(self.position_coop())
                     
         def perfect_shoot(self, p):
             return SoccerAction(Vector2D(), 0.1 * (p-self.my_position()))
@@ -188,7 +183,7 @@ class ActionDefensive(Deplacement):
             return SoccerAction(Vector2D(), 0.015 * (p-self.my_position()))
             
     def garder_balle(self):
-        if ((self.ball_position()-self.my_position()).norm <= self.zone_tir()):
+        if self.zone_tir():
             return self.dribble(self.zone_hauteGauche())
         else:
             return self.aller(self.ball_position())
