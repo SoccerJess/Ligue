@@ -15,7 +15,7 @@ def get_team(i):
         s.add("Bakambu", AttaqueStrategy_1v1())
     if i == 2:
         s.add("Giroud", AttaqueStrategy_2v2())
-        s.add("Perrin", PasseStrategy())
+        s.add("Perrin", AttaqueStrategy_2v2())
     if i == 4:
         s.add("Carl", AttaqueStrategy())
         s.add("Cabaye", AttaqueStrategy())

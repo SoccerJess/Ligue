@@ -18,11 +18,18 @@ class AttaqueStrategy_1v1(Strategy):
         Strategy.__init__(self,"Random")
     def compute_strategy(self, state, id_team, id_player):        
         me = ActionOffensive(state, id_team, id_player)
-        if me.zone_tir() and me.est_au_milieu(me.ball_position_x()):
-            return me.dribble(me.but_adv())
-        if me.zone_tir() and me.est_en_attaque(me.my_position_x()):
+        if me.zone_tir():
             return me.perfect_shoot(me.but_adv())
-        return me.aller(me.ball_position())
+        elif (me.est_en_attaque(me.ball_position_x())):
+            return me.aller(me.ball_position_future())
+        else:
+            return me.aller(me.ball_position_future())        
+        
+#        if me.zone_tir() and me.est_au_milieu(me.ball_position_x()):
+#            return me.dribble(me.but_adv())
+#        if me.zone_tir() and me.est_en_attaque(me.my_position_x()):
+#            return me.perfect_shoot(me.but_adv())
+#        return me.aller(me.ball_position())
 
 class AttaqueStrategy_2v2(Strategy):
     def __init__(self):
