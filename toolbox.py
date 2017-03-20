@@ -58,19 +58,25 @@ class Position(object):
 #        return p > 125 and p < 135 and p > 5 and p < 15
 
     def est_au_milieu(self, p):
-        return p > 25 and p < 125
-                         
+        return p >= 25 and p <= 125
+        
     def est_en_attaque(self, p):
         if (self.id_team == 1):
             return p >= 125
         else:
             return p < 25
+   
+    def est_dans_zone_passe(self,p):
+        return p >= 75 and p <= 89
         
     def est_en_defense(self, p):
         if (self.id_team == 1):
             return p <= 25
         else:
-            return p >= 125            
+            return p >= 125       
+            
+    def get_random_vec(self, x, y):
+        return Vector2D.create_random(x, y)
  
     def mon_but(self):        
         if (self.id_team == 2):
@@ -122,21 +128,22 @@ class Position(object):
                 return self.state.player_state(2,1).position.y
             if (self.id_team == 1):
                 return self.state.player_state(2,0).position.y
-    
-    def zone_tir(self):
-        return (self.ball_position() - self.my_position()).norm <= settings.PLAYER_RADIUS + settings.BALL_RADIUS
-        
-    def zone_hauteGauche(self):
-        return Vector2D(10, 75)
-        
-    def zone_hauteDroite(self):
-        return Vector2D(130, 75)
+
+    def zone_basseDroite(self):
+        return Vector2D(130, 25)
         
     def zone_basseGauche(self):
         return Vector2D(10, 25)
-    
-    def zone_basseDroite(self):
-        return Vector2D(130, 25)
+        
+    def zone_hauteDroite(self):
+        return Vector2D(130, 75)
+            
+    def zone_hauteGauche(self):
+        return Vector2D(10, 75)
+        
+    def zone_tir(self):
+        return (self.ball_position() - self.my_position()).norm <= settings.PLAYER_RADIUS + settings.BALL_RADIUS
+        
         
 #    def position_adv(self):
 #        if (self.id_team == 1):
@@ -162,7 +169,7 @@ class Deplacement(Position):
         
 class ActionOffensive(Deplacement):
         def dribble(self, p):
-            return SoccerAction(Vector2D(), 0.015 * (p-self.my_position()))
+            return SoccerAction(Vector2D(), 0.01 * (p-self.my_position()))
             
         def dribbler(self):
             return self.dribble(self.but_adv())
@@ -173,8 +180,8 @@ class ActionOffensive(Deplacement):
         def perfect_shoot(self, p):
             return SoccerAction(Vector2D(), 0.1 * (p-self.my_position()))
         
-#        def shoot(self, p):
-#            return SoccerAction(Vector2D(), p-self.my_position())
+        def shoot(self, p):
+            return SoccerAction(Vector2D(), p-self.my_position())
 
 ###############################################################################
 
