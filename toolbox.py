@@ -64,10 +64,10 @@ class Position(object):
         if (self.id_team == 1):
             return p >= 125
         else:
-            return p < 25
-   
-    def est_dans_zone_passe(self,p):
-        return p >= 75 and p <= 89
+            return p <= 25
+#   
+#    def est_dans_zone_passe(self,p):
+#        return p >= 75 and p <= 89
         
     def est_en_defense(self, p):
         if (self.id_team == 1):
@@ -102,7 +102,7 @@ class Position(object):
         if (self.id_team == 2):
             if (self.id_player == 0):
                 return self.state.player_state(2,1).position
-            if (self.id_team == 1):
+            if (self.id_player == 1):
                 return self.state.player_state(2,0).position
                 
     def position_coop_x(self):
@@ -114,10 +114,11 @@ class Position(object):
        if (self.id_team == 2):
             if (self.id_player == 0):
                 return self.state.player_state(2,1).position.x
-            if (self.id_team == 1):
+            if (self.id_player == 1):
                 return self.state.player_state(2,0).position.x
                 
     def position_coop_y(self):
+
         if (self.id_team == 1):
             if (self.id_player == 0):
                 return self.state.player_state(1,1).position.y
@@ -126,7 +127,7 @@ class Position(object):
         if (self.id_team == 2):
             if (self.id_player == 0):
                 return self.state.player_state(2,1).position.y
-            if (self.id_team == 1):
+            if (self.id_player == 1):
                 return self.state.player_state(2,0).position.y
 
     def zone_basseDroite(self):
@@ -176,6 +177,9 @@ class ActionOffensive(Deplacement):
  
         def passe(self):
             return self.perfect_shoot(self.position_coop())
+        
+        def perfect_passe(self, p):
+            return SoccerAction(Vector2D(), 0.067 * (p-self.my_position()))
                     
         def perfect_shoot(self, p):
             return SoccerAction(Vector2D(), 0.1 * (p-self.my_position()))

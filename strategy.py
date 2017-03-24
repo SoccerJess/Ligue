@@ -20,18 +20,14 @@ class AttaqueStrategy_1v1(Strategy):
         me = ActionOffensive(state, id_team, id_player)
         if me.zone_tir():
             return me.perfect_shoot(me.but_adv())
-<<<<<<< HEAD
         else:
             return me.aller(me.ball_position_future())
         
 #        me = ActionOffensive(state, id_team, id_player)
-=======
-        elif (me.est_en_attaque(me.ball_position_x())):
-            return me.aller(me.ball_position_future())
-        else:
-            return me.aller(me.ball_position_future())        
-        
->>>>>>> 847aa288936a4416eef9fe10bb595cd71ac50662
+#        elif (me.est_en_attaque(me.ball_position_x())):
+#            return me.aller(me.ball_position_future())
+#        else:
+#            return me.aller(me.ball_position_future())               
 #        if me.zone_tir() and me.est_au_milieu(me.ball_position_x()):
 #            return me.dribble(me.but_adv())
 #        if me.zone_tir() and me.est_en_attaque(me.my_position_x()):
@@ -68,7 +64,7 @@ class PasseStrategy(Strategy):
             if me.est_en_attaque(me.position_coop_x()):
                 return me.passe()
             else:
-                return me.dribble(me.but_adv())
+                return me.perfect_passe(me.zone_basseGauche())
         else:
             if me.est_en_attaque(me.ball_position_x()):
                 return  me.aller(Vector2D(settings.GAME_WIDTH/2, me.ball_position_y()))  
