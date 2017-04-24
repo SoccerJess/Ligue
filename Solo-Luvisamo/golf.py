@@ -1,6 +1,7 @@
 from soccersimulator import GolfState,Golf,Parcours1,Parcours2,Parcours3,Parcours4
 from soccersimulator import SoccerTeam,show_simu
 from soccersimulator import Strategy,SoccerAction,Vector2D,settings
+from toolbox import *
 
 GOLF = 0.001
 SLALOM = 10.
@@ -27,10 +28,26 @@ class DemoStrategy(Strategy):
         """ sinon """
         distance = state.player_state(id_team,id_player).position.distance(zone.position+zone.l/2.)
         return SoccerAction()
+        
+class Golfeur(Strategy):
+    def __init__(self,name="Golfeur"):
+        Strategy.__init__(self,name)
+    def compute_strategy(self,state,id_team,id_player):
+        me = ActionOffensive(state, id_team, id_player)
+        zones = state.get_zones(id_team)
+        if not me.zone_tir():
+            return me.aller(me.ball_position())
+        elif len(zones) == 0:
+             return me.perfect_shoot(me.but_adv())
+        else:
+            zone = zones[0]
+            if zone.dedans(state.ball.position):
+                return me.aller(me.ball_position())
+            return me.perfect_shoot(zone.position + zone.l/2.)
 
 team1 = SoccerTeam()
 team2 = SoccerTeam()
-team1.add("John",DemoStrategy())
+team1.add("John",Golfeur())
 team2.add("John",DemoStrategy())
 simu = Parcours1(team1=team1,vitesse=GOLF)
 show_simu(simu)

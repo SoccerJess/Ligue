@@ -1,0 +1,164 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Jan 23 17:21:26 2017
+
+@author: 3415756
+"""
+
+from soccersimulator import Vector2D, SoccerState, SoccerAction
+from soccersimulator import settings
+from soccersimulator.strategies  import Strategy
+from soccersimulator.mdpsoccer import SoccerTeam, Simulation
+from soccersimulator.gui import SimuGUI,show_state,show_simu
+import random
+import math
+
+#Toolbox de base
+
+class Position(object):
+    def __init__(self, state, id_team, id_player):
+        self.state = state
+        self.id_team = id_team
+        self.id_player = id_player
+        
+#    def alea(self):
+#        self.x = 0
+#        self.aux = 0
+#        self.y = 0
+#        self.const = 1
+#        if (self.aux == 0) and (self.const == 1):
+#            self.x = Vector2D.create_random(50, 70)
+#            self.aux = self.x
+#            self.y = self.aux
+#            print(self.y)
+#        return self.y
+            
+    def ball_position(self):
+        return self.state.ball.position
+        
+    def ball_position_future(self):
+        return self.ball_position() + self.state.ball.vitesse * 10
+        
+    def but_adv(self):
+        if (self.id_team == 1):
+            return Vector2D(settings.GAME_WIDTH, settings.GAME_HEIGHT/2)
+        else:
+            return Vector2D(0, settings.GAME_HEIGHT/2)
+            
+#    def can_shoot(self):
+#            return self.state.player_state(self.id_team, self.id_player).can_shoot
+            
+#    def est_dans_la_zone(self, p):
+#        return p > 125 and p < 135 and p > 5 and p < 15
+
+    def est_au_milieu(self, p):
+        return p >= 25 and p <= 125
+        
+    def est_en_attaque(self, p):
+        if (self.id_team == 1):
+            return p >= 125
+        else:
+            return p <= 25
+#   
+#    def est_dans_zone_passe(self,p):
+#        return p >= 75 and p <= 89
+        
+    def est_en_defense(self, p):
+        if (self.id_team == 1):
+            return p <= 25
+        else:
+            return p >= 125
+            
+    def get_dir_jeu(self):
+        return  (self.but_adv()-self.mon_but()).normalize()
+            
+    def get_random_vec(self, x, y):
+        return Vector2D.create_random(x, y)
+ 
+    def mon_but(self):        
+        if (self.id_team == 2):
+            return Vector2D(settings.GAME_WIDTH, settings.GAME_HEIGHT/2)
+        else:
+            return Vector2D(0, settings.GAME_HEIGHT/2)
+    
+    def my_position(self):
+        return self.state.player_state(self.id_team, self.id_player).position
+        
+    def position_coop(self):
+        if (self.id_team == 1):
+            if (self.id_player == 0):
+                return self.state.player_state(1,1).position
+            if (self.id_player == 1):
+                return self.state.player_state(1,0).position
+        if (self.id_team == 2):
+            if (self.id_player == 0):
+                return self.state.player_state(2,1).position
+            if (self.id_player == 1):
+                return self.state.player_state(2,0).position
+    
+    def zone_basse(self):
+        return Vector2D((self.get_dir_jeu()*150-self.mon_but()).x, 20)
+        
+    def zone_haute(self):
+        return Vector2D((self.get_dir_jeu()*150-self.mon_but()).x, 70)
+        
+    def zone_tir(self):
+        return (self.ball_position() - self.my_position()).norm <= settings.PLAYER_RADIUS + settings.BALL_RADIUS
+        
+        
+#    def position_adv(self):
+#        if (self.id_team == 1):
+#            return self.state.player_state(self.id_team, self.id_player).position
+#        else:
+#            return self.state.player_state(2, self.id_player).position
+        
+###############################################################################
+        
+class Deplacement(Position):
+    def aller(self, p):
+        return SoccerAction(p-self.my_position(), Vector2D())
+    
+#    def ralentir (self):
+#        settings.maxPlayerAcceleration = 0.2
+#        if (self.but_adv() - self.my_position()).norm <= 50 and (self.ball_position() - self.my_position()).norm <= 10:
+#            settings.maxPlayerAcceleration = 0.05
+#            return self.aller(self.ball_position())
+#        else:
+#            return SoccerAction(Vector2D(), Vector2D())
+        
+###############################################################################
+        
+class ActionOffensive(Deplacement):
+        def dribble(self, p):
+            return SoccerAction(Vector2D(), 0.01 * (p-self.my_position()))
+            
+        def dribbler(self):
+            return self.dribble(self.but_adv())
+ 
+        def passe(self):
+            return self.perfect_shoot(self.position_coop())
+        
+        def perfect_passe(self, p):
+            return SoccerAction(Vector2D(), 0.067 * (p-self.my_position()))
+                    
+        def perfect_shoot(self, p):
+            return SoccerAction(Vector2D(), 0.1 * (p-self.my_position()))
+        
+        def shoot(self, p):
+            return SoccerAction(Vector2D(), p-self.my_position())
+
+###############################################################################
+
+class ActionDefensive(Deplacement):          
+    def dribble(self, p):
+            return SoccerAction(Vector2D(), 0.015 * (p-self.my_position()))
+            
+    def garder_balle(self):
+        if self.zone_tir():
+            return self.dribble(self.zone_hauteGauche())
+        else:
+            return self.aller(self.ball_position())
+    
+    def shoot(self, p):
+            return SoccerAction(Vector2D(), p-self.my_position())
+        
