@@ -12,9 +12,11 @@ from golf import Golfeur
 from toolbox import *
 
 def get_golf_team():
-    s = SoccerTeam(name = "ApouhGC")
-    return s
-    
+    team1 = SoccerTeam()
+    team1.add("John",Golfeur())
+    return team1
+
 def get_slalom_team1():
-    s = SoccerTeam(name = "ApouhGC")
-    return s
+    team1 = SoccerTeam()
+    team1.add("John",Golfeur())
+    return team1
