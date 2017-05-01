@@ -44,7 +44,7 @@ class AttaqueStrategy_2v2(Strategy):
         elif me.est_en_attaque(me.ball_position_x()):
             return me.aller(me.ball_position_future())
         else:
-            return me.aller(Vector2D(me.ball_position_x(), me.my_position_y()))
+            return me.aller(Vector2D(abs(me.but_adv().x - 25), me.my_position_y()))
     
 #Stategie de defense
 class DefenseStrategy(Strategy):
@@ -64,12 +64,27 @@ class PasseStrategy(Strategy):
             if me.est_en_attaque(me.position_coop_x()):
                 return me.passe()
             else:
-                return me.perfect_passe(me.zone_basseGauche())
+                return me.dribbler()
         else:
             if me.est_en_attaque(me.ball_position_x()):
                 return  me.aller(Vector2D(settings.GAME_WIDTH/2, me.ball_position_y()))  
             else:
                 return me.aller(me.ball_position())
+                
+
+#Strategie gardien
+class GardienStrategy(Strategy):
+    def __init__(self):
+        Strategy.__init__(self,"Random")
+    def compute_strategy(self, state, id_team, id_player):
+        me = ActionOffensive(state, id_team, id_player)
+        if me.est_en_defense(me.ball_position().x):
+            if not me.zone_tir():
+                return me.aller(me.ball_position())
+            else:
+                return me.perfect_shoot(me.but_adv())
+        else:
+            return me.aller(Vector2D(abs(me.mon_but().x - 15), settings.GAME_HEIGHT/2))
 #        
 #        if me.zone_tir() and me.est_dans_zone_passe(me.my_position_x()) :
 #            return me.passe()

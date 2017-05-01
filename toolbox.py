@@ -37,7 +37,7 @@ class Position(object):
         return self.state.ball.position
         
     def ball_position_future(self):
-        return self.ball_position() + self.state.ball.vitesse * 10
+        return self.ball_position() + self.state.ball.vitesse 
         
     def ball_position_x(self):
         return self.state.ball.position.x

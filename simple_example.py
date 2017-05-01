@@ -14,6 +14,10 @@ team2.add("John",AttaqueStrategy_2v2()) #Strategie qui ne fait rien
 team1.add("Paul",Strategy())   #Strategie aleatoire
 team2.add("Moro",PasseStrategy())
 team1.add("Dylan",Strategy())
+team1.add("Moi",GardienStrategy())
+team2.add("Toi",GardienStrategy())
+team1.add("Mow",Strategy())
+team2.add("Tow",Strategy())
 
 #Creation d'une partie
 simu = Simulation(team1,team2)
